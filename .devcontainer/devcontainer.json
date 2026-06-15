@@ -1,0 +1,17 @@
+{
+  "name": "React & Claude Code Environment",
+  // 安定版のDebian Bookwormイメージを使用
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "npm install -g @anthropic-ai/claude-code",
+  "forwardPorts": [5173],
+  "portsAttributes": {
+    "5173": {
+      "label": "Vite Dev Server",
+      "onAutoForward": "openBrowserOnce"
+    }
+  }
+}
