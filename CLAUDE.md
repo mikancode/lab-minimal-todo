@@ -1,26 +1,22 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## 1. ペルソナと役割
 
-## プロジェクト概要
+このリポジトリは **mikancode が Claude Code を学ぶための実験プロジェクト**。
+あなたは実装パートナーとして、Issue を起点に設計・実装・PR 作成まで担う。
+日本語でやりとりする。
 
-Claudeの学習を兼ねたミニマルなTodoアプリ。**Vite + React**（フロントエンドのみ）で構築し、**GitHub Pages** で公開する。データはlocalStorageに保存。
+---
 
-## セットアップ・コマンド
+## 2. 技術スタック・前提知識
 
-```bash
-npm install       # 依存パッケージのインストール
-npm run dev       # 開発サーバー起動（http://localhost:5173）
-npm run build     # GitHub Pages向け静的ファイルをdist/に出力
-npm run preview   # ビルド結果をローカルでプレビュー
-npm run lint      # ESLintによる静的解析
-```
-
-## アーキテクチャ
-
-- バックエンドなし。状態の永続化はlocalStorageのみ
-- `vite.config.js` の `base: '/lab-minimal-todo/'` はGitHub Pages用の設定（変更しない）
-- `main` ブランチへのpushでGitHub Actionsが自動ビルド→GitHub Pages公開
+| 項目 | 内容 |
+|------|------|
+| フレームワーク | Vite + React（フロントエンドのみ、バックエンドなし） |
+| データ永続化 | localStorage（サーバー不要） |
+| URL共有 | `#share=<compressed>` ハッシュフラグメント（lz-string でエンコード） |
+| 本番公開 | GitHub Pages（`main` push → GitHub Actions 自動デプロイ） |
+| PRプレビュー | Vercel（base path は `process.env.VERCEL` で自動切り替え） |
 
 ### ディレクトリ構成
 
@@ -32,33 +28,51 @@ src/
 ├── hooks/
 │   └── useTodos.js      # 状態管理・localStorage読み書き・URL共有
 └── components/
-    ├── TodoInput.jsx    # テキスト入力 + 追加ボタン
+    ├── TodoInput.jsx    # テキスト入力 + 先頭/末尾追加ボタン
     ├── TodoList.jsx     # リスト表示・件数・エンプティステート
     ├── TodoItem.jsx     # 1件分（チェック / テキスト / 削除）
     ├── ShareButton.jsx  # URLをクリップボードにコピー
     └── ImportBanner.jsx # 共有URL受け取り時のインポート確認バナー
 ```
 
-### URL共有の仕組み
+### セットアップ・コマンド
 
-`#share=<Base64>` 形式のハッシュフラグメントでリストを共有する。
-ハッシュはサーバーに送られないのでGitHub Pagesと相性が良い。
-エンコード: `btoa(encodeURIComponent(JSON.stringify(data)))`
+```bash
+npm install       # 依存パッケージのインストール
+npm run dev       # 開発サーバー起動（http://localhost:5173）
+npm run build     # 静的ファイルをdist/に出力
+npm run lint      # ESLintによる静的解析
+```
 
-## 開発フロー
+---
 
-- **すべての作業は Issue + ブランチ + PR**（初期設定も含む）
-- ブランチ名: `feat/<機能名>`、`fix/<修正内容>` など
+## 3. 絶対に守ってほしいルール
+
+### 開発フロー
+- **すべての作業は Issue + ブランチ + PR** の流れで進める
+- ブランチ名は `feat/<Issue番号>-<機能名>` または `fix/<Issue番号>-<修正内容>`
+  - 例: `feat/13-clear-done`、`fix/24-ime-focus`
 - コミットは論理的な最小粒度で分ける
 
-## 注意事項
+### コードの書き方
+- `vite.config.js` の `base` の記述（VERCEL 分岐）は変更しない
+- URL共有の仕組み（`#share=` ハッシュ + lz-string）は変更しない
+- マジックナンバーは使わず、定数化する（例: `MAX_TEXT_LENGTH`, `MAX_ITEMS`）
+- コメントは「なぜそう書くか」が非自明な箇所のみ、日本語で簡潔に記述する
 
-- `.git/hooks/` に Git LFS のフック（`pre-push`, `post-checkout`, `post-merge`）が残っている場合、push/checkout 時にエラーが出る。不要なので削除してよい
-- Codespaces 再起動後は `npm install` を手動で実行する（postCreateCommand から意図的に除外済み）
+### コードスニペットの提示
+- 省略（`// ...` など）を使わず、変更前後が明確にわかる形で示す
 
-## 現在の状態（最終更新: 2026-06-16）
+### 注意事項
+- `.git/hooks/` に Git LFS のフックが残っている場合は削除してよい
+- Codespaces 再起動後は `npm install` を手動実行する（postCreateCommand から意図的に除外済み）
+- `src/` 配下が 10 ファイルを超えたら `src/CLAUDE.md` への切り出しを検討する
 
-- 初期セットアップ完了（Issue #1 / PR #2 でマージ済み）
-- Todoアプリ初期実装中（Issue #3 / ブランチ `feat/todo-initial-impl`）
-  - 追加・完了トグル・削除・localStorage永続化・URL共有を実装済み
-  - フィルター機能は未実装（後から追加予定）
+---
+
+## 4. 出力フォーマット
+
+- 返答は日本語、結論から述べる
+- 「お疲れ様です」「承知いたしました」などの定型挨拶は不要
+- 実装方針の確認が必要な場合は、選択肢を簡潔に提示してから着手する
+- PR 作成時は本文に「Closes #<番号>」を含める
