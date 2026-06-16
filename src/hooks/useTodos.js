@@ -36,6 +36,19 @@ export function useTodos() {
     if (!trimmed) return
     if (trimmed.length > MAX_TEXT_LENGTH) return
     if (todos.length >= MAX_ITEMS) return
+    setTodos(prev => [{
+      id: crypto.randomUUID(),
+      text: trimmed,
+      done: false,
+      createdAt: Date.now(),
+    }, ...prev])
+  }
+
+  function addToBack(text) {
+    const trimmed = text.trim()
+    if (!trimmed) return
+    if (trimmed.length > MAX_TEXT_LENGTH) return
+    if (todos.length >= MAX_ITEMS) return
     setTodos(prev => [...prev, {
       id: crypto.randomUUID(),
       text: trimmed,
@@ -67,5 +80,5 @@ export function useTodos() {
     return `${window.location.origin}${window.location.pathname}#share=${encoded}`
   }
 
-  return { todos, add, toggle, remove, importTodos, getShareUrl }
+  return { todos, add, addToBack, toggle, remove, importTodos, getShareUrl }
 }
