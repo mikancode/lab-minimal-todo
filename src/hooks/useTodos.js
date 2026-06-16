@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import LZString from 'lz-string'
 
 const STORAGE_KEY = 'todos'
 
@@ -14,7 +15,7 @@ export function parseSharedHash() {
   const match = window.location.hash.match(/^#share=(.+)/)
   if (!match) return null
   try {
-    return JSON.parse(decodeURIComponent(atob(match[1])))
+    return JSON.parse(LZString.decompressFromEncodedURIComponent(match[1]))
   } catch {
     return null
   }
@@ -57,7 +58,7 @@ export function useTodos() {
 
   function getShareUrl() {
     const data = todos.map(({ text, done }) => ({ text, done }))
-    const encoded = btoa(encodeURIComponent(JSON.stringify(data)))
+    const encoded = LZString.compressToEncodedURIComponent(JSON.stringify(data))
     return `${window.location.origin}${window.location.pathname}#share=${encoded}`
   }
 
