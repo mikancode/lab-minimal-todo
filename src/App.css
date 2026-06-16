@@ -327,3 +327,27 @@
   color: var(--primary);
   background: rgba(255, 107, 107, 0.1);
 }
+
+/* ── Input Wrapper & Char Counter ────────── */
+
+.input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.input-wrapper .input-field {
+  width: 100%;
+}
+
+.char-counter {
+  position: absolute;
+  right: 10px;
+  bottom: -18px;
+  font-size: 11px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.char-counter--over {
+  color: #FF3B30;
+}

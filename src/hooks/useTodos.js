@@ -21,6 +21,9 @@ export function parseSharedHash() {
   }
 }
 
+export const MAX_TEXT_LENGTH = 50
+export const MAX_ITEMS = 50
+
 export function useTodos() {
   const [todos, setTodos] = useState(readStorage)
 
@@ -31,6 +34,8 @@ export function useTodos() {
   function add(text) {
     const trimmed = text.trim()
     if (!trimmed) return
+    if (trimmed.length > MAX_TEXT_LENGTH) return
+    if (todos.length >= MAX_ITEMS) return
     setTodos(prev => [...prev, {
       id: crypto.randomUUID(),
       text: trimmed,
