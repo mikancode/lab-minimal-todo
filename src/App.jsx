@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useTodos, parseSharedHash } from './hooks/useTodos'
+import { useTodos, parseSharedHash, MAX_TEXT_LENGTH, MAX_ITEMS } from './hooks/useTodos'
 import TodoInput from './components/TodoInput'
 import TodoList from './components/TodoList'
 import ShareButton from './components/ShareButton'
@@ -37,7 +37,7 @@ function App() {
         <ShareButton getShareUrl={getShareUrl} disabled={todos.length === 0} />
       </header>
       <main className="main">
-        <TodoInput onAdd={add} />
+        <TodoInput onAdd={add} todosCount={todos.length} maxItems={MAX_ITEMS} maxLength={MAX_TEXT_LENGTH} />
         <TodoList todos={todos} onToggle={toggle} onRemove={remove} />
       </main>
     </div>
