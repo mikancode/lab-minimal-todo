@@ -1,0 +1,65 @@
+import { useState, useEffect } from 'react'
+
+const STORAGE_KEY = 'todos'
+
+function readStorage() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')
+  } catch {
+    return []
+  }
+}
+
+export function parseSharedHash() {
+  const match = window.location.hash.match(/^#share=(.+)/)
+  if (!match) return null
+  try {
+    return JSON.parse(decodeURIComponent(atob(match[1])))
+  } catch {
+    return null
+  }
+}
+
+export function useTodos() {
+  const [todos, setTodos] = useState(readStorage)
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
+  }, [todos])
+
+  function add(text) {
+    const trimmed = text.trim()
+    if (!trimmed) return
+    setTodos(prev => [...prev, {
+      id: crypto.randomUUID(),
+      text: trimmed,
+      done: false,
+      createdAt: Date.now(),
+    }])
+  }
+
+  function toggle(id) {
+    setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t))
+  }
+
+  function remove(id) {
+    setTodos(prev => prev.filter(t => t.id !== id))
+  }
+
+  function importTodos(items) {
+    setTodos(items.map(item => ({
+      id: crypto.randomUUID(),
+      text: item.text,
+      done: item.done ?? false,
+      createdAt: Date.now(),
+    })))
+  }
+
+  function getShareUrl() {
+    const data = todos.map(({ text, done }) => ({ text, done }))
+    const encoded = btoa(encodeURIComponent(JSON.stringify(data)))
+    return `${window.location.origin}${window.location.pathname}#share=${encoded}`
+  }
+
+  return { todos, add, toggle, remove, importTodos, getShareUrl }
+}
