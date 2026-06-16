@@ -7,7 +7,7 @@ import ImportBanner from './components/ImportBanner'
 import './App.css'
 
 function App() {
-  const { todos, add, toggle, remove, importTodos, getShareUrl } = useTodos()
+  const { todos, add, addToBack, toggle, remove, importTodos, getShareUrl } = useTodos()
   const [pendingImport, setPendingImport] = useState(null)
 
   useEffect(() => {
@@ -37,7 +37,7 @@ function App() {
         <ShareButton getShareUrl={getShareUrl} disabled={todos.length === 0} />
       </header>
       <main className="main">
-        <TodoInput onAdd={add} todosCount={todos.length} maxItems={MAX_ITEMS} maxLength={MAX_TEXT_LENGTH} />
+        <TodoInput onAdd={add} onAddBack={addToBack} todosCount={todos.length} maxItems={MAX_ITEMS} maxLength={MAX_TEXT_LENGTH} />
         <TodoList todos={todos} onToggle={toggle} onRemove={remove} />
       </main>
     </div>

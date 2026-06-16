@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 
-export default function TodoInput({ onAdd, todosCount, maxItems, maxLength }) {
+export default function TodoInput({ onAdd, onAddBack, todosCount, maxItems, maxLength }) {
   const [text, setText] = useState('')
   const inputRef = useRef(null)
 
@@ -14,6 +14,13 @@ export default function TodoInput({ onAdd, todosCount, maxItems, maxLength }) {
     onAdd(text)
     setText('')
     // iOS含むモバイルでキーボードを維持するため、user gestureの中でfocusを呼ぶ
+    inputRef.current?.focus()
+  }
+
+  function handleAddBack() {
+    if (!canSubmit) return
+    onAddBack(text)
+    setText('')
     inputRef.current?.focus()
   }
 
@@ -38,7 +45,10 @@ export default function TodoInput({ onAdd, todosCount, maxItems, maxLength }) {
         )}
       </div>
       <button className="add-btn" type="submit" disabled={!canSubmit}>
-        追加
+        先頭
+      </button>
+      <button className="add-btn add-btn--secondary" type="button" onClick={handleAddBack} disabled={!canSubmit}>
+        末尾
       </button>
     </form>
   )
