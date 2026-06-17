@@ -107,10 +107,10 @@ export function useTodos() {
     // id・createdAt はデバイス固有のため共有データには含めない
     const data = todos.map(({ text, done }) => ({ text, done }))
     const encoded = LZString.compressToEncodedURIComponent(JSON.stringify(data))
-    const base = `${window.location.origin}${window.location.pathname}#share=${encoded}`
-    // デフォルトタイトルはURLに含めない
-    if (title === DEFAULT_TITLE) return base
-    return `${base}&t=${encodeURIComponent(title)}`
+    const base = `${window.location.origin}${window.location.pathname}`
+    // デフォルトタイトルはURLに含めない。日本語をそのまま含めるためエンコードしない
+    if (title === DEFAULT_TITLE) return `${base}#share=${encoded}`
+    return `${base}#t=${title}&share=${encoded}`
   }
 
   return { todos, add, addToBack, toggle, remove, importTodos, getShareUrl, clearDone, title, setTitle }
