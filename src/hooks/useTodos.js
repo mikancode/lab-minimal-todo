@@ -74,11 +74,15 @@ export function useTodos() {
     })))
   }
 
+  function clearDone() {
+    setTodos(prev => prev.filter(t => !t.done))
+  }
+
   function getShareUrl() {
     const data = todos.map(({ text, done }) => ({ text, done }))
     const encoded = LZString.compressToEncodedURIComponent(JSON.stringify(data))
     return `${window.location.origin}${window.location.pathname}#share=${encoded}`
   }
 
-  return { todos, add, addToBack, toggle, remove, importTodos, getShareUrl }
+  return { todos, add, addToBack, toggle, remove, importTodos, getShareUrl, clearDone }
 }
