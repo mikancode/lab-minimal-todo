@@ -55,7 +55,8 @@ function App() {
             className="title"
             onClick={() => { setDraftTitle(title === DEFAULT_TITLE ? '' : title); setIsEditingTitle(true) }}
           >
-            {title}
+            {/* デフォルト時はすみカッコで「編集可能なプレースホルダー」として表示 */}
+            {title === DEFAULT_TITLE ? `[${title}]` : title}
           </h1>
         )}
         <ShareButton getShareUrl={getShareUrl} disabled={todos.length === 0} />
