@@ -87,7 +87,7 @@
   font-size: 32px;
   font-weight: 800;
   letter-spacing: -1px;
-  color: var(--text);
+  color: #222222;
   cursor: pointer;
   transition: opacity var(--transition);
   /* タイトルが短くてもタップエリアを header 内で最大化する */
