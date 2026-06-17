@@ -19,7 +19,8 @@ export function parseSharedHash() {
   // t= はオプション（タイトルなしでも共有可）
   const titleMatch = hash.match(/[#&]t=([^&]+)/)
   try {
-    const title = titleMatch ? titleMatch[1] : null
+    // ブラウザがハッシュ内の日本語をパーセントエンコードする場合があるためデコードする
+    const title = titleMatch ? decodeURIComponent(titleMatch[1]) : null
     const items = JSON.parse(LZString.decompressFromEncodedURIComponent(listMatch[1]))
     if (!Array.isArray(items)) return null
     return { title, items }
