@@ -7,7 +7,7 @@ import ImportBanner from './components/ImportBanner'
 import './App.css'
 
 function App() {
-  const { todos, add, addToBack, toggle, remove, importTodos, getShareUrl } = useTodos()
+  const { todos, add, addToBack, toggle, remove, importTodos, getShareUrl, clearDone } = useTodos()
   const [pendingImport, setPendingImport] = useState(null)
 
   useEffect(() => {
@@ -38,7 +38,7 @@ function App() {
       </header>
       <main className="main">
         <TodoInput onAdd={add} onAddBack={addToBack} todosCount={todos.length} maxItems={MAX_ITEMS} maxLength={MAX_TEXT_LENGTH} />
-        <TodoList todos={todos} onToggle={toggle} onRemove={remove} />
+        <TodoList todos={todos} onToggle={toggle} onRemove={remove} onClearDone={clearDone} />
       </main>
     </div>
   )

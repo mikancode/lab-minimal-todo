@@ -208,6 +208,12 @@
   gap: 10px;
 }
 
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .list-meta {
   font-size: 12px;
   font-weight: 600;
@@ -215,6 +221,27 @@
   text-transform: uppercase;
   color: var(--text-muted);
   padding: 0 4px;
+}
+
+.clear-done-btn {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  min-height: 28px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.clear-done-btn:hover {
+  color: #FF3B30;
+  border-color: #FF3B30;
+}
+
+.clear-done-btn:active {
+  transform: scale(0.96);
 }
 
 .list {
