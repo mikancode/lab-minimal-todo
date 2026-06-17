@@ -13,12 +13,15 @@ function readStorage() {
 
 export function parseSharedHash() {
   const hash = window.location.hash
-  const shareMatch = hash.match(/[#&]share=([^&]+)/)
-  if (!shareMatch) return null
+  // l= がなければ共有URLではない
+  const listMatch = hash.match(/[#&]l=([^&]+)/)
+  if (!listMatch) return null
+  // t= はオプション（タイトルなしでも共有可）
   const titleMatch = hash.match(/[#&]t=([^&]+)/)
   try {
-    const items = JSON.parse(LZString.decompressFromEncodedURIComponent(shareMatch[1]))
-    const title = titleMatch ? decodeURIComponent(titleMatch[1]) : null
+    const title = titleMatch ? titleMatch[1] : null
+    const items = JSON.parse(LZString.decompressFromEncodedURIComponent(listMatch[1]))
+    if (!Array.isArray(items)) return null
     return { title, items }
   } catch {
     return null
@@ -108,9 +111,9 @@ export function useTodos() {
     const data = todos.map(({ text, done }) => ({ text, done }))
     const encoded = LZString.compressToEncodedURIComponent(JSON.stringify(data))
     const base = `${window.location.origin}${window.location.pathname}`
-    // デフォルトタイトルはURLに含めない。日本語をそのまま含めるためエンコードしない
-    if (title === DEFAULT_TITLE) return `${base}#share=${encoded}`
-    return `${base}#t=${title}&share=${encoded}`
+    // URL形式: #t=タイトル&l=リスト。デフォルトタイトルは含めない
+    if (title === DEFAULT_TITLE) return `${base}#l=${encoded}`
+    return `${base}#t=${title}&l=${encoded}`
   }
 
   return { todos, add, addToBack, toggle, remove, importTodos, getShareUrl, clearDone, title, setTitle }
