@@ -12,10 +12,18 @@ function readStorage() {
 }
 
 export function parseSharedHash() {
-  const match = window.location.hash.match(/^#share=(.+)/)
-  if (!match) return null
+  const hash = window.location.hash
+  // l= がなければ共有URLではない
+  const listMatch = hash.match(/[#&]l=([^&]+)/)
+  if (!listMatch) return null
+  // t= はオプション（タイトルなしでも共有可）
+  const titleMatch = hash.match(/[#&]t=([^&]+)/)
   try {
-    return JSON.parse(LZString.decompressFromEncodedURIComponent(match[1]))
+    // ブラウザがハッシュ内の日本語をパーセントエンコードする場合があるためデコードする
+    const title = titleMatch ? decodeURIComponent(titleMatch[1]) : null
+    const items = JSON.parse(LZString.decompressFromEncodedURIComponent(listMatch[1]))
+    if (!Array.isArray(items)) return null
+    return { title, items }
   } catch {
     return null
   }
@@ -23,14 +31,33 @@ export function parseSharedHash() {
 
 export const MAX_TEXT_LENGTH = 50
 export const MAX_ITEMS = 50
+export const MAX_TITLE_LENGTH = 30
+export const DEFAULT_TITLE = 'みにまリスト'
+
+const TITLE_KEY = 'listTitle'
+
+function readTitle() {
+  return localStorage.getItem(TITLE_KEY) ?? DEFAULT_TITLE
+}
 
 export function useTodos() {
   // 関数参照を渡すことでマウント時のみ localStorage を読む（遅延初期化）
   const [todos, setTodos] = useState(readStorage)
+  const [title, setTitleState] = useState(readTitle)
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
   }, [todos])
+
+  useEffect(() => {
+    localStorage.setItem(TITLE_KEY, title)
+  }, [title])
+
+  function setTitle(value) {
+    // 空文字でblurした場合はデフォルトに戻す
+    const trimmed = value.trim() || DEFAULT_TITLE
+    setTitleState(trimmed.slice(0, MAX_TITLE_LENGTH))
+  }
 
   function add(text) {
     const trimmed = text.trim()
@@ -84,8 +111,11 @@ export function useTodos() {
     // id・createdAt はデバイス固有のため共有データには含めない
     const data = todos.map(({ text, done }) => ({ text, done }))
     const encoded = LZString.compressToEncodedURIComponent(JSON.stringify(data))
-    return `${window.location.origin}${window.location.pathname}#share=${encoded}`
+    const base = `${window.location.origin}${window.location.pathname}`
+    // URL形式: #t=タイトル&l=リスト。デフォルトタイトルは含めない
+    if (title === DEFAULT_TITLE) return `${base}#l=${encoded}`
+    return `${base}#t=${title}&l=${encoded}`
   }
 
-  return { todos, add, addToBack, toggle, remove, importTodos, getShareUrl, clearDone }
+  return { todos, add, addToBack, toggle, remove, importTodos, getShareUrl, clearDone, title, setTitle }
 }

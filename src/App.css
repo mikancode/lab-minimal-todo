@@ -88,6 +88,29 @@
   font-weight: 800;
   letter-spacing: -1px;
   color: var(--text);
+  cursor: pointer;
+  transition: opacity var(--transition);
+  /* タイトルが短くてもタップエリアを header 内で最大化する */
+  flex: 1;
+}
+
+.title:hover {
+  opacity: 0.6;
+}
+
+.title-input {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--text);
+  /* input はデフォルトでシステムフォントを使うため継承を明示 */
+  font-family: inherit;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--primary);
+  outline: none;
+  min-width: 0;
+  flex: 1;
 }
 
 .share-btn {
