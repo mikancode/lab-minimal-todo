@@ -17,6 +17,7 @@ export default function TodoList({ todos, onToggle, onRemove, onClearDone }) {
   }
 
   const remaining = todos.filter(t => !t.done).length
+  // filter の二重呼び出しを避けるため減算で算出
   const doneCount = todos.length - remaining
 
   return (

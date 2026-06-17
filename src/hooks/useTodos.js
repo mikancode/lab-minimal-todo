@@ -25,6 +25,7 @@ export const MAX_TEXT_LENGTH = 50
 export const MAX_ITEMS = 50
 
 export function useTodos() {
+  // 関数参照を渡すことでマウント時のみ localStorage を読む（遅延初期化）
   const [todos, setTodos] = useState(readStorage)
 
   useEffect(() => {
@@ -66,6 +67,7 @@ export function useTodos() {
   }
 
   function importTodos(items) {
+    // 共有元と ID が衝突しないよう新規 ID を振り直す
     setTodos(items.map(item => ({
       id: crypto.randomUUID(),
       text: item.text,
@@ -79,6 +81,7 @@ export function useTodos() {
   }
 
   function getShareUrl() {
+    // id・createdAt はデバイス固有のため共有データには含めない
     const data = todos.map(({ text, done }) => ({ text, done }))
     const encoded = LZString.compressToEncodedURIComponent(JSON.stringify(data))
     return `${window.location.origin}${window.location.pathname}#share=${encoded}`
