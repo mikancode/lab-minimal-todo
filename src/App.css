@@ -221,6 +221,11 @@
   text-transform: uppercase;
   color: var(--text-muted);
   padding: 0 4px;
+  transition: color 0.2s;
+}
+
+.list-meta--all-done {
+  color: #34C759;
 }
 
 .clear-done-btn {

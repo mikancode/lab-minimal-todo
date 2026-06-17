@@ -19,11 +19,14 @@ export default function TodoList({ todos, onToggle, onRemove, onClearDone }) {
   const remaining = todos.filter(t => !t.done).length
   // filter の二重呼び出しを避けるため減算で算出
   const doneCount = todos.length - remaining
+  const allDone = remaining === 0
 
   return (
     <section className="list-section">
       <div className="list-header">
-        <p className="list-meta">{remaining} / {todos.length} 件残り</p>
+        <p className={`list-meta${allDone ? ' list-meta--all-done' : ''}`}>
+          {doneCount} / {todos.length} 完了
+        </p>
         {doneCount > 0 && (
           <button className="clear-done-btn" onClick={onClearDone}>
             完了をクリア
