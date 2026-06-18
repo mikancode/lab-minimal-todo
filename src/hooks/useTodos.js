@@ -19,8 +19,7 @@ export function parseSharedHash() {
   // t= はオプション（タイトルなしでも共有可）
   const titleMatch = hash.match(/[#&]t=([^&]+)/)
   try {
-    // ブラウザがハッシュ内の日本語をパーセントエンコードする場合があるためデコードする
-    const title = titleMatch ? decodeURIComponent(titleMatch[1]) : null
+    const title = titleMatch ? LZString.decompressFromEncodedURIComponent(titleMatch[1]) : null
     const items = JSON.parse(LZString.decompressFromEncodedURIComponent(listMatch[1]))
     if (!Array.isArray(items)) return null
     return { title, items }
@@ -112,9 +111,9 @@ export function useTodos() {
     const data = todos.map(({ text, done }) => ({ text, done }))
     const encoded = LZString.compressToEncodedURIComponent(JSON.stringify(data))
     const base = `${window.location.origin}${window.location.pathname}`
-    // URL形式: #t=タイトル&l=リスト。デフォルトタイトルは含めない
+    // URL形式: #t=<LZString圧縮タイトル>&l=リスト。デフォルトタイトルは含めない
     if (title === DEFAULT_TITLE) return `${base}#l=${encoded}`
-    return `${base}#t=${title}&l=${encoded}`
+    return `${base}#t=${LZString.compressToEncodedURIComponent(title)}&l=${encoded}`
   }
 
   return { todos, add, addToBack, toggle, remove, importTodos, getShareUrl, clearDone, title, setTitle }
