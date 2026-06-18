@@ -27,17 +27,17 @@ export default function TodoList({ todos, onToggle, onRemove, onClearDone }) {
         <p className={`list-meta${allDone ? ' list-meta--all-done' : ''}`}>
           {doneCount} / {todos.length} 完了
         </p>
-        {doneCount > 0 && (
-          <button className="clear-done-btn" onClick={onClearDone}>
-            完了をクリア
-          </button>
-        )}
       </div>
       <ul className="list">
         {todos.map(todo => (
           <TodoItem key={todo.id} todo={todo} onToggle={onToggle} onRemove={onRemove} />
         ))}
       </ul>
+      {doneCount > 0 && (
+        <button className="clear-done-btn" onClick={onClearDone}>
+          完了をクリア
+        </button>
+      )}
     </section>
   )
 }
