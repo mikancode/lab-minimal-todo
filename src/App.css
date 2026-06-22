@@ -52,8 +52,10 @@
   transition: background var(--transition);
 }
 
-.import-accept-btn:hover {
-  background: var(--primary-dark);
+@media (hover: hover) {
+  .import-accept-btn:hover {
+    background: var(--primary-dark);
+  }
 }
 
 .import-dismiss-btn {
@@ -69,8 +71,10 @@
   transition: background var(--transition);
 }
 
-.import-dismiss-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+@media (hover: hover) {
+  .import-dismiss-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
 }
 
 /* ── Header ──────────────────────────────── */
@@ -94,8 +98,10 @@
   flex: 1;
 }
 
-.title:hover {
-  opacity: 0.6;
+@media (hover: hover) {
+  .title:hover {
+    opacity: 0.6;
+  }
 }
 
 .title-input {
@@ -128,9 +134,11 @@
   white-space: nowrap;
 }
 
-.share-btn:hover:not(:disabled) {
-  border-color: var(--primary);
-  color: var(--primary);
+@media (hover: hover) {
+  .share-btn:hover:not(:disabled) {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
 }
 
 .share-btn:disabled {
@@ -212,9 +220,11 @@
   border: 1.5px solid var(--border);
 }
 
-.add-btn--secondary:hover:not(:disabled) {
-  border-color: var(--primary);
-  color: var(--primary);
+@media (hover: hover) {
+  .add-btn--secondary:hover:not(:disabled) {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
 }
 
 .add-btn--secondary:disabled {
@@ -406,9 +416,11 @@
   inset: -6px;
 }
 
-.delete-btn:hover {
-  color: var(--primary);
-  background: rgba(255, 107, 107, 0.1);
+@media (hover: hover) {
+  .delete-btn:hover {
+    color: var(--primary);
+    background: rgba(255, 107, 107, 0.1);
+  }
 }
 
 /* ── Input Wrapper & Char Counter ────────── */
