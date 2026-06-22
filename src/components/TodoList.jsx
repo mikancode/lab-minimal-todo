@@ -1,14 +1,17 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import TodoItem from './TodoItem'
 
 export default function TodoList({ todos, onToggle, onRemove, onClearDone }) {
   const [pendingClear, setPendingClear] = useState(false)
+  const timerRef = useRef(null)
 
   function handleClearClick() {
     if (!pendingClear) {
       setPendingClear(true)
+      timerRef.current = setTimeout(() => setPendingClear(false), 3000)
       return
     }
+    clearTimeout(timerRef.current)
     onClearDone()
     setPendingClear(false)
   }
@@ -49,7 +52,6 @@ export default function TodoList({ todos, onToggle, onRemove, onClearDone }) {
         <button
           className={`clear-done-btn${pendingClear ? ' clear-done-btn--pending' : ''}`}
           onClick={handleClearClick}
-          onBlur={() => setPendingClear(false)}
         >
           {pendingClear ? 'もう一度タップで削除' : '完了をクリア'}
         </button>
