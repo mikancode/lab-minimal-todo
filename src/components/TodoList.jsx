@@ -1,6 +1,21 @@
+import { useState, useRef } from 'react'
 import TodoItem from './TodoItem'
 
 export default function TodoList({ todos, onToggle, onRemove, onClearDone }) {
+  const [pendingClear, setPendingClear] = useState(false)
+  const timerRef = useRef(null)
+
+  function handleClearClick() {
+    if (!pendingClear) {
+      setPendingClear(true)
+      timerRef.current = setTimeout(() => setPendingClear(false), 3000)
+      return
+    }
+    clearTimeout(timerRef.current)
+    onClearDone()
+    setPendingClear(false)
+  }
+
   if (todos.length === 0) {
     return (
       <div className="empty-state">
@@ -27,17 +42,20 @@ export default function TodoList({ todos, onToggle, onRemove, onClearDone }) {
         <p className={`list-meta${allDone ? ' list-meta--all-done' : ''}`}>
           {doneCount} / {todos.length} 完了
         </p>
-        {doneCount > 0 && (
-          <button className="clear-done-btn" onClick={onClearDone}>
-            完了をクリア
-          </button>
-        )}
       </div>
       <ul className="list">
         {todos.map(todo => (
           <TodoItem key={todo.id} todo={todo} onToggle={onToggle} onRemove={onRemove} />
         ))}
       </ul>
+      {doneCount > 0 && (
+        <button
+          className={`clear-done-btn${pendingClear ? ' clear-done-btn--pending' : ''}`}
+          onClick={handleClearClick}
+        >
+          {pendingClear ? 'もう一度タップで削除' : '完了をクリア'}
+        </button>
+      )}
     </section>
   )
 }
