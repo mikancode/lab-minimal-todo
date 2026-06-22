@@ -266,9 +266,11 @@
   transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
 
-.clear-done-btn:hover {
-  color: #FF3B30;
-  border-color: #FF3B30;
+@media (hover: hover) {
+  .clear-done-btn:hover {
+    color: #FF3B30;
+    border-color: #FF3B30;
+  }
 }
 
 .clear-done-btn:active {
