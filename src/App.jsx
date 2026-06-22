@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useTodos, parseSharedHash, MAX_TEXT_LENGTH, MAX_ITEMS, MAX_TITLE_LENGTH, DEFAULT_TITLE } from './hooks/useTodos'
 import TodoInput from './components/TodoInput'
 import TodoList from './components/TodoList'
@@ -9,18 +9,17 @@ import './App.css'
 
 function App() {
   const { todos, add, addToBack, toggle, remove, importTodos, getShareUrl, clearDone, title, setTitle } = useTodos()
-  const [pendingImport, setPendingImport] = useState(null)
+  const [pendingImport, setPendingImport] = useState(() => {
+    const shared = parseSharedHash()
+    if (shared && shared.items?.length > 0) {
+      window.history.replaceState(null, '', window.location.pathname)
+      return shared
+    }
+    return null
+  })
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const [draftTitle, setDraftTitle] = useState('')
   const [isHelpOpen, setIsHelpOpen] = useState(false)
-
-  useEffect(() => {
-    const shared = parseSharedHash()
-    if (shared && shared.items?.length > 0) {
-      setPendingImport(shared)
-      window.history.replaceState(null, '', window.location.pathname)
-    }
-  }, [])
 
   function handleImport() {
     importTodos(pendingImport.items)
