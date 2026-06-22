@@ -4,6 +4,7 @@ import TodoInput from './components/TodoInput'
 import TodoList from './components/TodoList'
 import ShareButton from './components/ShareButton'
 import ImportBanner from './components/ImportBanner'
+import HelpModal from './components/HelpModal'
 import './App.css'
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
   const [pendingImport, setPendingImport] = useState(null)
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const [draftTitle, setDraftTitle] = useState('')
+  const [isHelpOpen, setIsHelpOpen] = useState(false)
 
   useEffect(() => {
     const shared = parseSharedHash()
@@ -59,8 +61,10 @@ function App() {
             {title === DEFAULT_TITLE ? `[${title}]` : title}
           </h1>
         )}
+        <button className="help-btn" onClick={() => setIsHelpOpen(true)} aria-label="使い方">?</button>
         <ShareButton getShareUrl={getShareUrl} disabled={todos.length === 0} />
       </header>
+      {isHelpOpen && <HelpModal onClose={() => setIsHelpOpen(false)} />}
       <main className="main">
         <TodoInput onAdd={add} onAddBack={addToBack} todosCount={todos.length} maxItems={MAX_ITEMS} maxLength={MAX_TEXT_LENGTH} />
         <TodoList todos={todos} onToggle={toggle} onRemove={remove} onClearDone={clearDone} />
