@@ -5,6 +5,7 @@ import TodoList from './components/TodoList'
 import ShareButton from './components/ShareButton'
 import ImportBanner from './components/ImportBanner'
 import HelpModal from './components/HelpModal'
+import TemplateSection from './components/TemplateSection'
 import './App.css'
 
 function App() {
@@ -67,6 +68,12 @@ function App() {
       <main className="main">
         <TodoInput onAdd={add} onAddBack={addToBack} todosCount={todos.length} maxItems={MAX_ITEMS} maxLength={MAX_TEXT_LENGTH} />
         <TodoList todos={todos} onToggle={toggle} onRemove={remove} onClearDone={clearDone} />
+        {todos.length === 0 && title === DEFAULT_TITLE && (
+          <TemplateSection onApply={({ title: tTitle, items }) => {
+            importTodos(items.map(text => ({ text, done: false })))
+            setTitle(tTitle)
+          }} />
+        )}
       </main>
     </div>
   )
