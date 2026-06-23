@@ -18,7 +18,7 @@ export default function ShareButton({ getShareUrl, title, disabled }) {
     const url = getShareUrl()
     if (navigator.share) {
       try {
-        await navigator.share({ title, url })
+        await navigator.share({ title, text: title, url })
       } catch (e) {
         // キャンセル（AbortError）は無視、その他はクリップボードにフォールバック
         if (e.name !== 'AbortError') {
