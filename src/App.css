@@ -557,3 +557,52 @@
   color: var(--primary);
   font-weight: 700;
 }
+
+/* ── Template Section ────────────────────── */
+
+.template-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+.template-section__label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0 4px;
+}
+
+.template-section__btns {
+  display: flex;
+  gap: 8px;
+}
+
+.template-btn {
+  flex: 1;
+  padding: 12px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  min-height: 44px;
+  font-family: inherit;
+  transition: border-color var(--transition), color var(--transition);
+}
+
+@media (hover: hover) {
+  .template-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+}
+
+.template-btn:active {
+  transform: scale(0.97);
+}
