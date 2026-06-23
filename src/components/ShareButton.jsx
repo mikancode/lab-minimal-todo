@@ -16,7 +16,11 @@ export default function ShareButton({ getShareUrl, title, disabled }) {
 
   async function handleShare() {
     const url = getShareUrl()
-    if (navigator.share) {
+    // タッチデバイス（iOS/Android）のみ Web Share API を使用。
+    // PC の navigator.share（Windows シェアシート等）は text パラメータを
+    // Twitter 等に渡せないためクリップボードにフォールバックする。
+    const isTouchDevice = navigator.share && navigator.maxTouchPoints > 1
+    if (isTouchDevice) {
       try {
         await navigator.share({ title, text: title, url })
       } catch (e) {
