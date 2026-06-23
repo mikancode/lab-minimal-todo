@@ -14,7 +14,7 @@ const TEMPLATES = [
 export default function TemplateSection({ onApply }) {
   return (
     <div className="template-section">
-      <p className="template-section__label">テンプレートから始める</p>
+      <p className="template-section__label">サンプルを見る</p>
       <div className="template-section__btns">
         {TEMPLATES.map(t => (
           <button

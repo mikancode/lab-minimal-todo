@@ -583,17 +583,17 @@
 
 .template-btn {
   flex: 1;
-  padding: 12px 8px;
-  font-size: 14px;
+  padding: 10px 8px;
+  font-size: 13px;
   font-weight: 600;
-  color: var(--text);
-  background: var(--surface);
+  color: var(--text-muted);
+  background: transparent;
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
   cursor: pointer;
-  min-height: 44px;
+  min-height: 40px;
   font-family: inherit;
-  transition: border-color var(--transition), color var(--transition);
+  transition: color 0.15s, border-color 0.15s;
 }
 
 @media (hover: hover) {
