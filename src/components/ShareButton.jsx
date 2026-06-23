@@ -1,11 +1,12 @@
 import { useState } from 'react'
 
-export default function ShareButton({ getShareUrl, disabled }) {
+export default function ShareButton({ getShareUrl, title, disabled }) {
   const [copied, setCopied] = useState(false)
 
   async function copyToClipboard(url) {
+    const text = `${title}\n${url}`
     try {
-      await navigator.clipboard.writeText(url)
+      await navigator.clipboard.writeText(text)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
@@ -17,7 +18,7 @@ export default function ShareButton({ getShareUrl, disabled }) {
     const url = getShareUrl()
     if (navigator.share) {
       try {
-        await navigator.share({ url })
+        await navigator.share({ title, url })
       } catch (e) {
         // キャンセル（AbortError）は無視、その他はクリップボードにフォールバック
         if (e.name !== 'AbortError') {
