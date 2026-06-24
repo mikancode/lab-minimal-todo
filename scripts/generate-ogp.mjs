@@ -2,6 +2,12 @@ import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 
+// Vercelのビルド環境はCJKフォントがないため、コミット済みのogp.pngをそのまま使う
+if (process.env.VERCEL) {
+  console.log('Vercel環境のためOGP画像生成をスキップします')
+  process.exit(0)
+}
+
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const outPath = join(__dirname, '../public/ogp.png')
 
