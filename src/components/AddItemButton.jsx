@@ -8,7 +8,7 @@ export default function AddItemButton({ onAdd, label, todosCount, maxItems, maxL
   const isFull = todosCount >= maxItems
   const isOverLimit = text.length > maxLength
 
-  // トリガーボタンから開いたときのみフォーカス（マウント時は自動フォーカスしない）
+  // トリガーボタンから開いたときのみフォーカス（初期表示時は自動フォーカスしない）
   useEffect(() => {
     if (isOpen && !defaultOpen) {
       inputRef.current?.focus()
@@ -21,13 +21,13 @@ export default function AddItemButton({ onAdd, label, todosCount, maxItems, maxL
 
   function handleSubmit(e) {
     e?.preventDefault()
-    // compositionend のタイミングにより React state が遅れる場合にDOM値を参照
+    // compositionend のタイミングにより React state が遅れる場合に DOM 値を参照
     const val = inputRef.current?.value ?? text
     if (!val.trim() || val.length > maxLength) return
     onAdd(val)
     setText('')
     if (defaultOpen) {
-      // 常時表示フォームはフォームを閉じずにフォーカスを維持
+      // 先頭フォームは追加後もフォーカスを維持して連続入力を可能にする
       inputRef.current?.focus()
     } else {
       setIsOpen(false)
@@ -35,8 +35,8 @@ export default function AddItemButton({ onAdd, label, todosCount, maxItems, maxL
   }
 
   function handleBlur() {
-    // トリガーから開いたフォームはテキストが空なら閉じる
-    if (!defaultOpen && !text.trim()) setIsOpen(false)
+    setText('')
+    setIsOpen(false)
   }
 
   if (isFull) {
@@ -61,7 +61,7 @@ export default function AddItemButton({ onAdd, label, todosCount, maxItems, maxL
           value={text}
           onChange={e => setText(e.target.value)}
           onBlur={handleBlur}
-          placeholder={isFull ? `上限（${maxItems}件）に達しました` : 'アイテムを追加...'}
+          placeholder="アイテムを追加..."
           autoComplete="off"
           autoCorrect="off"
         />
@@ -71,26 +71,6 @@ export default function AddItemButton({ onAdd, label, todosCount, maxItems, maxL
           </span>
         )}
       </div>
-      {!defaultOpen && (
-        <>
-          <button
-            className="add-btn"
-            type="submit"
-            disabled={!text.trim() || isOverLimit}
-            onMouseDown={e => e.preventDefault()}
-          >
-            追加
-          </button>
-          <button
-            className="add-btn add-btn--secondary"
-            type="button"
-            onClick={() => setIsOpen(false)}
-            onMouseDown={e => e.preventDefault()}
-          >
-            ×
-          </button>
-        </>
-      )}
     </form>
   )
 }
