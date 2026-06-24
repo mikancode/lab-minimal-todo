@@ -62,7 +62,7 @@ function App() {
           </h1>
         )}
         <button className="help-btn" onClick={() => setIsHelpOpen(true)} aria-label="使い方">?</button>
-        <ShareButton getShareUrl={getShareUrl} title={title} disabled={todos.length === 0} />
+        <ShareButton getShareUrl={getShareUrl} title={title} />
       </header>
       {isHelpOpen && <HelpModal onClose={() => setIsHelpOpen(false)} />}
       <main className="main">

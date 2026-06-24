@@ -107,10 +107,12 @@ export function useTodos() {
   }
 
   function getShareUrl() {
+    const base = `${window.location.origin}${window.location.pathname}`
+    // 空リストはアプリ自体のURLを共有
+    if (todos.length === 0) return base
     // id・createdAt はデバイス固有のため共有データには含めない
     const data = todos.map(({ text, done }) => ({ text, done }))
     const encoded = LZString.compressToEncodedURIComponent(JSON.stringify(data))
-    const base = `${window.location.origin}${window.location.pathname}`
     // URL形式: #t=<LZString圧縮タイトル>&l=リスト。デフォルトタイトルは含めない
     if (title === DEFAULT_TITLE) return `${base}#l=${encoded}`
     return `${base}#t=${LZString.compressToEncodedURIComponent(title)}&l=${encoded}`
