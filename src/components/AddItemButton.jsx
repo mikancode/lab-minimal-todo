@@ -1,38 +1,42 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
-export default function AddItemButton({ onAdd, label, todosCount, maxItems, maxLength }) {
-  const [isOpen, setIsOpen] = useState(false)
+export default function AddItemButton({ onAdd, label, todosCount, maxItems, maxLength, defaultOpen = false }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen)
   const [text, setText] = useState('')
   const inputRef = useRef(null)
 
   const isFull = todosCount >= maxItems
   const isOverLimit = text.length > maxLength
-  const canSubmit = text.trim().length > 0 && !isOverLimit
+
+  // トリガーボタンから開いたときのみフォーカス（マウント時は自動フォーカスしない）
+  useEffect(() => {
+    if (isOpen && !defaultOpen) {
+      inputRef.current?.focus()
+    }
+  }, [isOpen, defaultOpen])
 
   function handleOpen() {
     setIsOpen(true)
-    // ユーザーイベント内でfocusを呼ぶことでiOSのキーボードを開く
-    setTimeout(() => inputRef.current?.focus(), 0)
   }
 
   function handleSubmit(e) {
     e?.preventDefault()
-    // compositionendのタイミングによりReact stateが遅れる場合にDOM値を参照
+    // compositionend のタイミングにより React state が遅れる場合にDOM値を参照
     const val = inputRef.current?.value ?? text
     if (!val.trim() || val.length > maxLength) return
     onAdd(val)
     setText('')
-    setIsOpen(false)
-  }
-
-  function handleCancel() {
-    setText('')
-    setIsOpen(false)
+    if (defaultOpen) {
+      // 常時表示フォームはフォームを閉じずにフォーカスを維持
+      inputRef.current?.focus()
+    } else {
+      setIsOpen(false)
+    }
   }
 
   function handleBlur() {
-    // 入力が空のまま離れた場合のみ閉じる
-    if (!text.trim()) handleCancel()
+    // トリガーから開いたフォームはテキストが空なら閉じる
+    if (!defaultOpen && !text.trim()) setIsOpen(false)
   }
 
   if (isFull) {
@@ -57,7 +61,7 @@ export default function AddItemButton({ onAdd, label, todosCount, maxItems, maxL
           value={text}
           onChange={e => setText(e.target.value)}
           onBlur={handleBlur}
-          placeholder="アイテムを追加..."
+          placeholder={isFull ? `上限（${maxItems}件）に達しました` : 'アイテムを追加...'}
           autoComplete="off"
           autoCorrect="off"
         />
@@ -67,22 +71,26 @@ export default function AddItemButton({ onAdd, label, todosCount, maxItems, maxL
           </span>
         )}
       </div>
-      <button
-        className="add-btn"
-        type="submit"
-        disabled={!canSubmit}
-        onMouseDown={e => e.preventDefault()}
-      >
-        追加
-      </button>
-      <button
-        className="add-btn add-btn--secondary"
-        type="button"
-        onClick={handleCancel}
-        onMouseDown={e => e.preventDefault()}
-      >
-        ×
-      </button>
+      {!defaultOpen && (
+        <>
+          <button
+            className="add-btn"
+            type="submit"
+            disabled={!text.trim() || isOverLimit}
+            onMouseDown={e => e.preventDefault()}
+          >
+            追加
+          </button>
+          <button
+            className="add-btn add-btn--secondary"
+            type="button"
+            onClick={() => setIsOpen(false)}
+            onMouseDown={e => e.preventDefault()}
+          >
+            ×
+          </button>
+        </>
+      )}
     </form>
   )
 }

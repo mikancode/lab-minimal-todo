@@ -66,7 +66,7 @@ function App() {
       </header>
       {isHelpOpen && <HelpModal onClose={() => setIsHelpOpen(false)} />}
       <main className="main">
-        <AddItemButton onAdd={add} label="＋ 先頭に追加" todosCount={todos.length} maxItems={MAX_ITEMS} maxLength={MAX_TEXT_LENGTH} />
+        <AddItemButton onAdd={add} label="＋ 先頭に追加" todosCount={todos.length} maxItems={MAX_ITEMS} maxLength={MAX_TEXT_LENGTH} defaultOpen />
         <TodoList todos={todos} onToggle={toggle} onRemove={remove} onClearDone={clearDone} />
         {todos.length > 0 && (
           <AddItemButton onAdd={addToBack} label="＋ 末尾に追加" todosCount={todos.length} maxItems={MAX_ITEMS} maxLength={MAX_TEXT_LENGTH} />
