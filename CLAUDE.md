@@ -63,6 +63,11 @@ npm run lint      # ESLintによる静的解析
 ### コードスニペットの提示
 - 省略（`// ...` など）を使わず、変更前後が明確にわかる形で示す
 
+### OGP画像の管理
+- `scripts/generate-ogp.mjs` を変更したら、必ずローカルで `node scripts/generate-ogp.mjs` を実行し、生成された `public/ogp.png` をセットでコミットする
+  - GitHub Pages 用は GitHub Actions がビルド時に自動生成する（`fonts-noto-cjk` インストール済み）
+  - Vercel 用はコミット済みの `public/ogp.png` をそのまま配信するため、ローカル再生成が必要
+
 ### 注意事項
 - `.git/hooks/` に Git LFS のフックが残っている場合は削除してよい
 - Codespaces 再起動後は `npm install` を手動実行する（postCreateCommand から意図的に除外済み）
