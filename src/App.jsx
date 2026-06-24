@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTodos, parseSharedHash, MAX_TEXT_LENGTH, MAX_ITEMS, MAX_TITLE_LENGTH, DEFAULT_TITLE } from './hooks/useTodos'
-import TodoInput from './components/TodoInput'
+import AddItemButton from './components/AddItemButton'
 import TodoList from './components/TodoList'
 import ShareButton from './components/ShareButton'
 import ImportBanner from './components/ImportBanner'
@@ -66,8 +66,11 @@ function App() {
       </header>
       {isHelpOpen && <HelpModal onClose={() => setIsHelpOpen(false)} />}
       <main className="main">
-        <TodoInput onAdd={add} onAddBack={addToBack} todosCount={todos.length} maxItems={MAX_ITEMS} maxLength={MAX_TEXT_LENGTH} />
+        <AddItemButton onAdd={add} label="＋ 先頭に追加" todosCount={todos.length} maxItems={MAX_ITEMS} maxLength={MAX_TEXT_LENGTH} />
         <TodoList todos={todos} onToggle={toggle} onRemove={remove} onClearDone={clearDone} />
+        {todos.length > 0 && (
+          <AddItemButton onAdd={addToBack} label="＋ 末尾に追加" todosCount={todos.length} maxItems={MAX_ITEMS} maxLength={MAX_TEXT_LENGTH} />
+        )}
         {todos.length === 0 && title === DEFAULT_TITLE && (
           <TemplateSection onApply={({ title: tTitle, items }) => {
             importTodos(items.map(text => ({ text, done: false })))
