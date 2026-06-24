@@ -1,6 +1,7 @@
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
+import { readFileSync } from 'fs'
 
 // Vercelのビルド環境はCJKフォントがないため、コミット済みのogp.pngをそのまま使う
 if (process.env.VERCEL) {
@@ -10,6 +11,9 @@ if (process.env.VERCEL) {
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const outPath = join(__dirname, '../public/ogp.png')
+const touchIconPath = join(__dirname, '../public/apple-touch-icon.png')
+
+const TOUCH_ICON_SIZE = 180
 
 const W = 1200
 const H = 630
@@ -43,3 +47,9 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
 
 await sharp(Buffer.from(svg)).png().toFile(outPath)
 console.log(`OGP image generated: ${outPath}`)
+
+// favicon.svg をそのままソースとして TOUCH_ICON_SIZE でレンダリング
+const faviconSvg = readFileSync(join(__dirname, '../public/favicon.svg'), 'utf8')
+  .replace('<svg ', `<svg width="${TOUCH_ICON_SIZE}" height="${TOUCH_ICON_SIZE}" `)
+await sharp(Buffer.from(faviconSvg)).png().toFile(touchIconPath)
+console.log(`Apple touch icon generated: ${touchIconPath}`)
