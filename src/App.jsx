@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useTodos, parseSharedHash, MAX_TEXT_LENGTH, MAX_ITEMS, MAX_TITLE_LENGTH, DEFAULT_TITLE } from './hooks/useTodos'
+import { useState } from 'react'
+import { useTodos, parseSharedHash, readStorage, MAX_TEXT_LENGTH, MAX_ITEMS, MAX_TITLE_LENGTH, DEFAULT_TITLE } from './hooks/useTodos'
 import AddItemButton from './components/AddItemButton'
 import TodoList from './components/TodoList'
 import ShareButton from './components/ShareButton'
@@ -9,28 +9,21 @@ import TemplateSection from './components/TemplateSection'
 import './App.css'
 
 function App() {
-  const { todos, add, addToBack, toggle, remove, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle } = useTodos()
-  const [pendingImport, setPendingImport] = useState(() => {
+  // 共有URLの解析とストレージ確認を初期化時に一括実施
+  // 空リスト時はバナー不要のため seed として useTodos に渡し、pendingImport は null にする
+  const [{ seed, pendingImportInit }] = useState(() => {
     const shared = parseSharedHash()
-    if (shared && shared.items?.length > 0) {
-      window.history.replaceState(null, '', window.location.pathname)
-      return shared
-    }
-    return null
+    if (!shared?.items?.length) return { seed: null, pendingImportInit: null }
+    window.history.replaceState(null, '', window.location.pathname)
+    if (readStorage().length === 0) return { seed: shared, pendingImportInit: null }
+    return { seed: null, pendingImportInit: shared }
   })
+
+  const { todos, add, addToBack, toggle, remove, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle } = useTodos(seed)
+  const [pendingImport, setPendingImport] = useState(pendingImportInit)
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const [draftTitle, setDraftTitle] = useState('')
   const [isHelpOpen, setIsHelpOpen] = useState(false)
-
-  // マウント時1回だけチェック: 空リストなら確認バナーをスキップして即インポート
-  useEffect(() => {
-    if (!pendingImport) return
-    if (todos.length === 0) {
-      importTodos(pendingImport.items)
-      if (pendingImport.title) setTitle(pendingImport.title)
-      setPendingImport(null) // eslint-disable-line react-hooks/set-state-in-effect
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleReplace() {
     importTodos(pendingImport.items)
