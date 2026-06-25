@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import TodoItem from './TodoItem'
 
-export default function TodoList({ todos, onToggle, onRemove, onUpdate, onClearDone, topSlot, children }) {
+export default function TodoList({ todos, onToggle, onRemove, onUpdate, onClearDone, sortDone, onSortDoneToggle, topSlot, children }) {
   const [pendingClear, setPendingClear] = useState(false)
   const timerRef = useRef(null)
 
@@ -28,6 +28,15 @@ export default function TodoList({ todos, onToggle, onRemove, onUpdate, onClearD
         <p className={`list-meta${allDone ? ' list-meta--all-done' : ''}`}>
           {doneCount} / {todos.length} 完了
         </p>
+        <button
+          className={`sort-done-btn${sortDone ? ' sort-done-btn--on' : ''}`}
+          onClick={onSortDoneToggle}
+          aria-pressed={sortDone}
+          aria-label="完了を末尾へ移動"
+          title="完了を末尾へ移動"
+        >
+          完了↓
+        </button>
       </div>
       {topSlot}
       {todos.length === 0 ? (

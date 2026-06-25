@@ -304,6 +304,32 @@
   color: #34C759;
 }
 
+.sort-done-btn {
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1.5px solid var(--border);
+  border-radius: 99px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+}
+
+.sort-done-btn--on {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: rgba(255, 107, 107, 0.08);
+}
+
+@media (hover: hover) {
+  .sort-done-btn:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+  }
+}
+
 .clear-done-btn {
   width: 100%;
   padding: 10px;

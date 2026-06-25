@@ -34,9 +34,14 @@ export const MAX_TITLE_LENGTH = 30
 export const DEFAULT_TITLE = 'みにまリスト'
 
 const TITLE_KEY = 'listTitle'
+const SORT_DONE_KEY = 'sortDone'
 
 function readTitle() {
   return localStorage.getItem(TITLE_KEY) ?? DEFAULT_TITLE
+}
+
+function readSortDone() {
+  return localStorage.getItem(SORT_DONE_KEY) === 'true'
 }
 
 export function useTodos(seed = null) {
@@ -55,6 +60,7 @@ export function useTodos(seed = null) {
   })
   // seed が渡されるのはストレージが空のときだけなので、title もシードを優先する
   const [title, setTitleState] = useState(() => seed?.title ?? readTitle())
+  const [sortDone, setSortDoneState] = useState(readSortDone)
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
@@ -63,6 +69,10 @@ export function useTodos(seed = null) {
   useEffect(() => {
     localStorage.setItem(TITLE_KEY, title)
   }, [title])
+
+  useEffect(() => {
+    localStorage.setItem(SORT_DONE_KEY, sortDone)
+  }, [sortDone])
 
   function setTitle(value) {
     // 空文字でblurした場合はデフォルトに戻す
@@ -96,8 +106,28 @@ export function useTodos(seed = null) {
     }])
   }
 
+  const [pendingMoveIds, setPendingMoveIds] = useState(new Set())
+
   function toggle(id) {
+    const target = todos.find(t => t.id === id)
+    if (!target) return
     setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t))
+    // sortDone ON 時は取り消し線アニメーション（0.35s）完走後に並び替えを反映するため
+    // 移動待ち中は pendingMoveIds に登録し、派生値計算で現在位置に留める
+    if (sortDone) {
+      setPendingMoveIds(prev => new Set([...prev, id]))
+      setTimeout(() => {
+        setPendingMoveIds(prev => {
+          const next = new Set(prev)
+          next.delete(id)
+          return next
+        })
+      }, 400)
+    }
+  }
+
+  function toggleSortDone() {
+    setSortDoneState(prev => !prev)
   }
 
   const [removedItem, setRemovedItem] = useState(null) // { item, index }
@@ -168,5 +198,11 @@ export function useTodos(seed = null) {
     return `${base}#t=${LZString.compressToEncodedURIComponent(title)}&l=${encoded}`
   }
 
-  return { todos, add, addToBack, toggle, remove, undoRemove, commitRemove, removedItem, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle }
+  // pendingMoveIds に含まれる間は done の反対として扱い、アニメーション完走まで位置を保持する
+  const effectiveDone = t => pendingMoveIds.has(t.id) ? !t.done : t.done
+  const displayTodos = sortDone
+    ? [...todos.filter(t => !effectiveDone(t)), ...todos.filter(t => effectiveDone(t))]
+    : todos
+
+  return { todos: displayTodos, add, addToBack, toggle, remove, undoRemove, commitRemove, removedItem, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle, sortDone, toggleSortDone }
 }
