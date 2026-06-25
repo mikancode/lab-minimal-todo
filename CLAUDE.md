@@ -14,26 +14,11 @@
 |------|------|
 | フレームワーク | Vite + React（フロントエンドのみ、バックエンドなし） |
 | データ永続化 | localStorage（サーバー不要） |
-| URL共有 | `#share=<compressed>` ハッシュフラグメント（lz-string でエンコード） |
+| URL共有 | `#l=<list>&t=<title>` ハッシュフラグメント（lz-string でエンコード） |
 | 本番公開 | GitHub Pages（`main` push → GitHub Actions 自動デプロイ） |
 | PRプレビュー | Vercel（base path は `process.env.VERCEL` で自動切り替え） |
 
-### ディレクトリ構成
-
-```
-src/
-├── App.jsx              # ルート。インポートバナー表示とレイアウト
-├── App.css              # 全コンポーネントのスタイル
-├── index.css            # グローバルリセット・CSS変数
-├── hooks/
-│   └── useTodos.js      # 状態管理・localStorage読み書き・URL共有
-└── components/
-    ├── TodoInput.jsx    # テキスト入力 + 先頭/末尾追加ボタン
-    ├── TodoList.jsx     # リスト表示・件数・エンプティステート
-    ├── TodoItem.jsx     # 1件分（チェック / テキスト / 削除）
-    ├── ShareButton.jsx  # URLをクリップボードにコピー
-    └── ImportBanner.jsx # 共有URL受け取り時のインポート確認バナー
-```
+src/ の構成・設計パターンは `src/CLAUDE.md` を参照。
 
 ### セットアップ・コマンド
 
@@ -56,7 +41,7 @@ npm run lint      # ESLintによる静的解析
 
 ### コードの書き方
 - `vite.config.js` の `base` の記述（VERCEL 分岐）は変更しない
-- URL共有の仕組み（`#share=` ハッシュ + lz-string）は変更しない
+- URL共有の仕組み（`#l=` / `#t=` ハッシュ + lz-string）は変更しない
 - マジックナンバーは使わず、定数化する（例: `MAX_TEXT_LENGTH`, `MAX_ITEMS`）
 - コメントは「なぜそう書くか」が非自明な箇所のみ、日本語で簡潔に記述する
 
@@ -71,7 +56,6 @@ npm run lint      # ESLintによる静的解析
 ### 注意事項
 - `.git/hooks/` に Git LFS のフックが残っている場合は削除してよい
 - Codespaces 再起動後は `npm install` を手動実行する（postCreateCommand から意図的に除外済み）
-- `src/` 配下が 10 ファイルを超えたら `src/CLAUDE.md` への切り出しを検討する
 
 ---
 
