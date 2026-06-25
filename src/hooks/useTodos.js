@@ -74,10 +74,6 @@ export function useTodos(seed = null) {
     localStorage.setItem(SORT_DONE_KEY, sortDone)
   }, [sortDone])
 
-  function setSortDone(value) {
-    setSortDoneState(value)
-  }
-
   function setTitle(value) {
     // 空文字でblurした場合はデフォルトに戻す
     const trimmed = value.trim() || DEFAULT_TITLE
@@ -112,15 +108,27 @@ export function useTodos(seed = null) {
 
   function toggle(id) {
     const updated = todos.map(t => t.id === id ? { ...t, done: !t.done } : t)
-    if (!sortDone) {
-      setTodos(updated)
-      return
+    setTodos(updated)
+    if (!sortDone) return
+    // 取り消し線アニメーション（0.35s）完走後に末尾移動
+    setTimeout(() => {
+      setTodos(prev => [
+        ...prev.filter(t => !t.done),
+        ...prev.filter(t => t.done),
+      ])
+    }, 400)
+  }
+
+  function toggleSortDone() {
+    const next = !sortDone
+    setSortDoneState(next)
+    if (next) {
+      // ON に切り替えた瞬間に既存の完了アイテムも末尾へ
+      setTodos(prev => [
+        ...prev.filter(t => !t.done),
+        ...prev.filter(t => t.done),
+      ])
     }
-    // sortDone ON: 完了を末尾に移動（未完了・完了それぞれの相対順序は維持）
-    setTodos([
-      ...updated.filter(t => !t.done),
-      ...updated.filter(t => t.done),
-    ])
   }
 
   const [removedItem, setRemovedItem] = useState(null) // { item, index }
@@ -191,5 +199,5 @@ export function useTodos(seed = null) {
     return `${base}#t=${LZString.compressToEncodedURIComponent(title)}&l=${encoded}`
   }
 
-  return { todos, add, addToBack, toggle, remove, undoRemove, commitRemove, removedItem, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle, sortDone, setSortDone }
+  return { todos, add, addToBack, toggle, remove, undoRemove, commitRemove, removedItem, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle, sortDone, toggleSortDone }
 }

@@ -20,7 +20,7 @@ function App() {
     return { seed: null, pendingImportInit: shared }
   })
 
-  const { todos, add, addToBack, toggle, remove, undoRemove, commitRemove, removedItem, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle, sortDone, setSortDone } = useTodos(seed)
+  const { todos, add, addToBack, toggle, remove, undoRemove, commitRemove, removedItem, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle, sortDone, toggleSortDone } = useTodos(seed)
   const [pendingImport, setPendingImport] = useState(pendingImportInit)
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const [draftTitle, setDraftTitle] = useState('')
@@ -83,7 +83,7 @@ function App() {
           onUpdate={update}
           onClearDone={clearDone}
           sortDone={sortDone}
-          onSortDoneToggle={() => setSortDone(!sortDone)}
+          onSortDoneToggle={toggleSortDone}
           topSlot={<AddItemButton onAdd={add} label="＋ 先頭に追加" todosCount={todos.length} maxItems={MAX_ITEMS} maxLength={MAX_TEXT_LENGTH} />}
         >
           <AddItemButton onAdd={addToBack} label="＋ 末尾に追加" todosCount={todos.length} maxItems={MAX_ITEMS} maxLength={MAX_TEXT_LENGTH} />
