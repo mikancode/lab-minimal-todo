@@ -16,10 +16,21 @@ export default function TodoList({ todos, onToggle, onRemove, onClearDone, topSl
     setPendingClear(false)
   }
 
-  if (todos.length === 0) {
-    return (
-      <>
-        {topSlot}
+  const remaining = todos.filter(t => !t.done).length
+  // filter の二重呼び出しを避けるため減算で算出
+  const doneCount = todos.length - remaining
+  // 空リスト時は「全完了」スタイルを適用しない
+  const allDone = todos.length > 0 && remaining === 0
+
+  return (
+    <section className="list-section">
+      <div className="list-header">
+        <p className={`list-meta${allDone ? ' list-meta--all-done' : ''}`}>
+          {doneCount} / {todos.length} 完了
+        </p>
+      </div>
+      {topSlot}
+      {todos.length === 0 ? (
         <div className="empty-state">
           <svg className="empty-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true">
             <rect x="8" y="10" width="32" height="34" rx="4" stroke="currentColor" strokeWidth="2.5" />
@@ -30,29 +41,14 @@ export default function TodoList({ todos, onToggle, onRemove, onClearDone, topSl
           <p className="empty-text">リストは空です</p>
           <p className="empty-sub">上のボタンからアイテムを追加してください</p>
         </div>
-      </>
-    )
-  }
-
-  const remaining = todos.filter(t => !t.done).length
-  // filter の二重呼び出しを避けるため減算で算出
-  const doneCount = todos.length - remaining
-  const allDone = remaining === 0
-
-  return (
-    <section className="list-section">
-      <div className="list-header">
-        <p className={`list-meta${allDone ? ' list-meta--all-done' : ''}`}>
-          {doneCount} / {todos.length} 完了
-        </p>
-      </div>
-      {topSlot}
-      <ul className="list">
-        {todos.map(todo => (
-          <TodoItem key={todo.id} todo={todo} onToggle={onToggle} onRemove={onRemove} />
-        ))}
-      </ul>
-      {children}
+      ) : (
+        <ul className="list">
+          {todos.map(todo => (
+            <TodoItem key={todo.id} todo={todo} onToggle={onToggle} onRemove={onRemove} />
+          ))}
+        </ul>
+      )}
+      {todos.length > 0 && children}
       {doneCount > 0 && (
         <button
           className={`clear-done-btn${pendingClear ? ' clear-done-btn--pending' : ''}`}
