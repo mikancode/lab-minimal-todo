@@ -6,6 +6,7 @@ import ShareButton from './components/ShareButton'
 import ImportBanner from './components/ImportBanner'
 import HelpModal from './components/HelpModal'
 import TemplateSection from './components/TemplateSection'
+import UndoToast from './components/UndoToast'
 import './App.css'
 
 function App() {
@@ -19,7 +20,7 @@ function App() {
     return { seed: null, pendingImportInit: shared }
   })
 
-  const { todos, add, addToBack, toggle, remove, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle } = useTodos(seed)
+  const { todos, add, addToBack, toggle, remove, undoRemove, commitRemove, removedItem, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle } = useTodos(seed)
   const [pendingImport, setPendingImport] = useState(pendingImportInit)
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const [draftTitle, setDraftTitle] = useState('')
@@ -92,6 +93,13 @@ function App() {
           }} />
         )}
       </main>
+      {removedItem && (
+        <UndoToast
+          item={removedItem}
+          onUndo={undoRemove}
+          onDismiss={commitRemove}
+        />
+      )}
     </div>
   )
 }
