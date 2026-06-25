@@ -17,6 +17,19 @@
   --transition: 0.15s ease;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1C1C1E;
+    --surface: #2C2C2E;
+    --primary: #FF6B6B;
+    --primary-dark: #E85555;
+    --text: #F2F2F7;
+    --text-muted: #8E8E93;
+    --border: #3A3A3C;
+    --shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  }
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI',
     'Segoe UI', sans-serif;
