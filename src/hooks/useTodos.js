@@ -34,9 +34,14 @@ export const MAX_TITLE_LENGTH = 30
 export const DEFAULT_TITLE = 'みにまリスト'
 
 const TITLE_KEY = 'listTitle'
+const SORT_DONE_KEY = 'sortDone'
 
 function readTitle() {
   return localStorage.getItem(TITLE_KEY) ?? DEFAULT_TITLE
+}
+
+function readSortDone() {
+  return localStorage.getItem(SORT_DONE_KEY) === 'true'
 }
 
 export function useTodos(seed = null) {
@@ -55,6 +60,7 @@ export function useTodos(seed = null) {
   })
   // seed が渡されるのはストレージが空のときだけなので、title もシードを優先する
   const [title, setTitleState] = useState(() => seed?.title ?? readTitle())
+  const [sortDone, setSortDoneState] = useState(readSortDone)
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
@@ -63,6 +69,14 @@ export function useTodos(seed = null) {
   useEffect(() => {
     localStorage.setItem(TITLE_KEY, title)
   }, [title])
+
+  useEffect(() => {
+    localStorage.setItem(SORT_DONE_KEY, sortDone)
+  }, [sortDone])
+
+  function setSortDone(value) {
+    setSortDoneState(value)
+  }
 
   function setTitle(value) {
     // 空文字でblurした場合はデフォルトに戻す
@@ -97,7 +111,16 @@ export function useTodos(seed = null) {
   }
 
   function toggle(id) {
-    setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t))
+    const updated = todos.map(t => t.id === id ? { ...t, done: !t.done } : t)
+    if (!sortDone) {
+      setTodos(updated)
+      return
+    }
+    // sortDone ON: 完了を末尾に移動（未完了・完了それぞれの相対順序は維持）
+    setTodos([
+      ...updated.filter(t => !t.done),
+      ...updated.filter(t => t.done),
+    ])
   }
 
   const [removedItem, setRemovedItem] = useState(null) // { item, index }
@@ -168,5 +191,5 @@ export function useTodos(seed = null) {
     return `${base}#t=${LZString.compressToEncodedURIComponent(title)}&l=${encoded}`
   }
 
-  return { todos, add, addToBack, toggle, remove, undoRemove, commitRemove, removedItem, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle }
+  return { todos, add, addToBack, toggle, remove, undoRemove, commitRemove, removedItem, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle, sortDone, setSortDone }
 }
