@@ -30,8 +30,8 @@ export default function AddItemButton({ onAdd, label, todosCount, maxItems, maxL
     inputRef.current?.focus()
   }
 
-  function handleClose() {
-    // テキストが入力済みの場合は破棄せず自動送信してから閉じる（blur 時の誤操作対策）
+  function handleBlur() {
+    // blur 時はテキストが残っていれば自動送信してから閉じる（誤操作対策）
     const val = inputRef.current?.value ?? text
     if (val.trim() && val.length <= maxLength) {
       handleSubmit()
@@ -42,8 +42,10 @@ export default function AddItemButton({ onAdd, label, todosCount, maxItems, maxL
 
   function handleKeyDown(e) {
     if (e.key === 'Escape') {
+      // Escape は入力を破棄して閉じる（送信しない）
       e.preventDefault()
-      handleClose()
+      setText('')
+      setIsOpen(false)
     }
   }
 
@@ -68,7 +70,7 @@ export default function AddItemButton({ onAdd, label, todosCount, maxItems, maxL
           type="text"
           value={text}
           onChange={e => setText(e.target.value)}
-          onBlur={handleClose}
+          onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           placeholder="アイテムを追加..."
           autoComplete="off"
