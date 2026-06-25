@@ -107,28 +107,11 @@ export function useTodos(seed = null) {
   }
 
   function toggle(id) {
-    const updated = todos.map(t => t.id === id ? { ...t, done: !t.done } : t)
-    setTodos(updated)
-    if (!sortDone) return
-    // 取り消し線アニメーション（0.35s）完走後に末尾移動
-    setTimeout(() => {
-      setTodos(prev => [
-        ...prev.filter(t => !t.done),
-        ...prev.filter(t => t.done),
-      ])
-    }, 400)
+    setTodos(todos.map(t => t.id === id ? { ...t, done: !t.done } : t))
   }
 
   function toggleSortDone() {
-    const next = !sortDone
-    setSortDoneState(next)
-    if (next) {
-      // ON に切り替えた瞬間に既存の完了アイテムも末尾へ
-      setTodos(prev => [
-        ...prev.filter(t => !t.done),
-        ...prev.filter(t => t.done),
-      ])
-    }
+    setSortDoneState(prev => !prev)
   }
 
   const [removedItem, setRemovedItem] = useState(null) // { item, index }
@@ -199,5 +182,9 @@ export function useTodos(seed = null) {
     return `${base}#t=${LZString.compressToEncodedURIComponent(title)}&l=${encoded}`
   }
 
-  return { todos, add, addToBack, toggle, remove, undoRemove, commitRemove, removedItem, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle, sortDone, toggleSortDone }
+  const displayTodos = sortDone
+    ? [...todos.filter(t => !t.done), ...todos.filter(t => t.done)]
+    : todos
+
+  return { todos: displayTodos, add, addToBack, toggle, remove, undoRemove, commitRemove, removedItem, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle, sortDone, toggleSortDone }
 }
