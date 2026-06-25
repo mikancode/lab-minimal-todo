@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTodos, parseSharedHash, MAX_TEXT_LENGTH, MAX_ITEMS, MAX_TITLE_LENGTH, DEFAULT_TITLE } from './hooks/useTodos'
 import AddItemButton from './components/AddItemButton'
 import TodoList from './components/TodoList'
@@ -21,6 +21,16 @@ function App() {
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const [draftTitle, setDraftTitle] = useState('')
   const [isHelpOpen, setIsHelpOpen] = useState(false)
+
+  // マウント時1回だけチェック: 空リストなら確認バナーをスキップして即インポート
+  useEffect(() => {
+    if (!pendingImport) return
+    if (todos.length === 0) {
+      importTodos(pendingImport.items)
+      if (pendingImport.title) setTitle(pendingImport.title)
+      setPendingImport(null)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleImport() {
     importTodos(pendingImport.items)
