@@ -31,13 +31,22 @@ export default function AddItemButton({ onAdd, label, todosCount, maxItems, maxL
   }
 
   function handleBlur() {
-    // テキストが入力済みの場合は破棄せず自動送信してから閉じる
+    // blur 時はテキストが残っていれば自動送信してから閉じる（誤操作対策）
     const val = inputRef.current?.value ?? text
     if (val.trim() && val.length <= maxLength) {
       handleSubmit()
     }
     setText('')
     setIsOpen(false)
+  }
+
+  function handleKeyDown(e) {
+    if (e.key === 'Escape') {
+      // Escape は入力を破棄して閉じる（送信しない）
+      e.preventDefault()
+      setText('')
+      setIsOpen(false)
+    }
   }
 
   if (isFull) {
@@ -62,6 +71,7 @@ export default function AddItemButton({ onAdd, label, todosCount, maxItems, maxL
           value={text}
           onChange={e => setText(e.target.value)}
           onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
           placeholder="アイテムを追加..."
           autoComplete="off"
           autoCorrect="off"
