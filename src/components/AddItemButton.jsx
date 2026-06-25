@@ -26,12 +26,8 @@ export default function AddItemButton({ onAdd, label, todosCount, maxItems, maxL
     if (!val.trim() || val.length > maxLength) return
     onAdd(val)
     setText('')
-    if (defaultOpen) {
-      // 先頭フォームは追加後もフォーカスを維持して連続入力を可能にする
-      inputRef.current?.focus()
-    } else {
-      setIsOpen(false)
-    }
+    // 追加後もフォームを閉じずにフォーカスを維持して連続入力を可能にする
+    inputRef.current?.focus()
   }
 
   function handleBlur() {

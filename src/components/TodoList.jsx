@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import TodoItem from './TodoItem'
 
-export default function TodoList({ todos, onToggle, onRemove, onClearDone }) {
+export default function TodoList({ todos, onToggle, onRemove, onClearDone, children }) {
   const [pendingClear, setPendingClear] = useState(false)
   const timerRef = useRef(null)
 
@@ -48,6 +48,7 @@ export default function TodoList({ todos, onToggle, onRemove, onClearDone }) {
           <TodoItem key={todo.id} todo={todo} onToggle={onToggle} onRemove={onRemove} />
         ))}
       </ul>
+      {children}
       {doneCount > 0 && (
         <button
           className={`clear-done-btn${pendingClear ? ' clear-done-btn--pending' : ''}`}
