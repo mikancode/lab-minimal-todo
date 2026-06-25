@@ -31,6 +31,11 @@ export default function AddItemButton({ onAdd, label, todosCount, maxItems, maxL
   }
 
   function handleBlur() {
+    // テキストが入力済みの場合は破棄せず自動送信してから閉じる
+    const val = inputRef.current?.value ?? text
+    if (val.trim() && val.length <= maxLength) {
+      handleSubmit()
+    }
     setText('')
     setIsOpen(false)
   }
