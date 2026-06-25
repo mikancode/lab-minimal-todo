@@ -106,17 +106,22 @@ export function useTodos(seed = null) {
     }])
   }
 
+  const [pendingMoveIds, setPendingMoveIds] = useState(new Set())
+
   function toggle(id) {
     const target = todos.find(t => t.id === id)
     if (!target) return
     setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t))
-    // 完了にする方向のみ、取り消し線アニメーション（0.35s）完走後に並び替えを反映
-    if (sortDone && !target.done) {
+    // sortDone ON 時は取り消し線アニメーション（0.35s）完走後に並び替えを反映するため
+    // 移動待ち中は pendingMoveIds に登録し、派生値計算で現在位置に留める
+    if (sortDone) {
+      setPendingMoveIds(prev => new Set([...prev, id]))
       setTimeout(() => {
-        setTodos(prev => [
-          ...prev.filter(t => !t.done),
-          ...prev.filter(t => t.done),
-        ])
+        setPendingMoveIds(prev => {
+          const next = new Set(prev)
+          next.delete(id)
+          return next
+        })
       }, 400)
     }
   }
@@ -193,8 +198,10 @@ export function useTodos(seed = null) {
     return `${base}#t=${LZString.compressToEncodedURIComponent(title)}&l=${encoded}`
   }
 
+  // pendingMoveIds に含まれる間は done の反対として扱い、アニメーション完走まで位置を保持する
+  const effectiveDone = t => pendingMoveIds.has(t.id) ? !t.done : t.done
   const displayTodos = sortDone
-    ? [...todos.filter(t => !t.done), ...todos.filter(t => t.done)]
+    ? [...todos.filter(t => !effectiveDone(t)), ...todos.filter(t => effectiveDone(t))]
     : todos
 
   return { todos: displayTodos, add, addToBack, toggle, remove, undoRemove, commitRemove, removedItem, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle, sortDone, toggleSortDone }
