@@ -3,7 +3,7 @@ import LZString from 'lz-string'
 
 const STORAGE_KEY = 'todos'
 
-function readStorage() {
+export function readStorage() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')
   } catch {
@@ -39,10 +39,22 @@ function readTitle() {
   return localStorage.getItem(TITLE_KEY) ?? DEFAULT_TITLE
 }
 
-export function useTodos() {
-  // 関数参照を渡すことでマウント時のみ localStorage を読む（遅延初期化）
-  const [todos, setTodos] = useState(readStorage)
-  const [title, setTitleState] = useState(readTitle)
+export function useTodos(seed = null) {
+  const [todos, setTodos] = useState(() => {
+    const stored = readStorage()
+    // ストレージが空のときだけシードデータで初期化（空リスト時の即インポート）
+    if (seed && stored.length === 0) {
+      return seed.items.map(item => ({
+        id: crypto.randomUUID(),
+        text: item.text,
+        done: item.done ?? false,
+        createdAt: Date.now(),
+      }))
+    }
+    return stored
+  })
+  // seed が渡されるのはストレージが空のときだけなので、title もシードを優先する
+  const [title, setTitleState] = useState(() => seed?.title ?? readTitle())
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
