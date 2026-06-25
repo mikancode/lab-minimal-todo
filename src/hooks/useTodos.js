@@ -100,8 +100,27 @@ export function useTodos(seed = null) {
     setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t))
   }
 
+  const [removedItem, setRemovedItem] = useState(null) // { item, index }
+
   function remove(id) {
+    const index = todos.findIndex(t => t.id === id)
+    if (index === -1) return
+    setRemovedItem({ item: todos[index], index })
     setTodos(prev => prev.filter(t => t.id !== id))
+  }
+
+  function undoRemove() {
+    if (!removedItem) return
+    setTodos(prev => {
+      const next = [...prev]
+      next.splice(Math.min(removedItem.index, prev.length), 0, removedItem.item)
+      return next
+    })
+    setRemovedItem(null)
+  }
+
+  function commitRemove() {
+    setRemovedItem(null)
   }
 
   function update(id, newText) {
@@ -149,5 +168,5 @@ export function useTodos(seed = null) {
     return `${base}#t=${LZString.compressToEncodedURIComponent(title)}&l=${encoded}`
   }
 
-  return { todos, add, addToBack, toggle, remove, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle }
+  return { todos, add, addToBack, toggle, remove, undoRemove, commitRemove, removedItem, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle }
 }
