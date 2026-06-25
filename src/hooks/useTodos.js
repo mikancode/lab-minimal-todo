@@ -108,6 +108,19 @@ export function useTodos() {
     })))
   }
 
+  function appendTodos(items) {
+    // 既存アイテムを保持しつつ末尾に結合、上限を超える分はカット
+    setTodos(prev => {
+      const newItems = items.map(item => ({
+        id: crypto.randomUUID(),
+        text: item.text,
+        done: item.done ?? false,
+        createdAt: Date.now(),
+      }))
+      return [...prev, ...newItems].slice(0, MAX_ITEMS)
+    })
+  }
+
   function clearDone() {
     setTodos(prev => prev.filter(t => !t.done))
   }
@@ -124,5 +137,5 @@ export function useTodos() {
     return `${base}#t=${LZString.compressToEncodedURIComponent(title)}&l=${encoded}`
   }
 
-  return { todos, add, addToBack, toggle, remove, update, importTodos, getShareUrl, clearDone, title, setTitle }
+  return { todos, add, addToBack, toggle, remove, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle }
 }

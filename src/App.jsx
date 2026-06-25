@@ -9,7 +9,7 @@ import TemplateSection from './components/TemplateSection'
 import './App.css'
 
 function App() {
-  const { todos, add, addToBack, toggle, remove, update, importTodos, getShareUrl, clearDone, title, setTitle } = useTodos()
+  const { todos, add, addToBack, toggle, remove, update, importTodos, appendTodos, getShareUrl, clearDone, title, setTitle } = useTodos()
   const [pendingImport, setPendingImport] = useState(() => {
     const shared = parseSharedHash()
     if (shared && shared.items?.length > 0) {
@@ -32,9 +32,14 @@ function App() {
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  function handleImport() {
+  function handleReplace() {
     importTodos(pendingImport.items)
     if (pendingImport.title) setTitle(pendingImport.title)
+    setPendingImport(null)
+  }
+
+  function handleAppend() {
+    appendTodos(pendingImport.items)
     setPendingImport(null)
   }
 
@@ -43,7 +48,8 @@ function App() {
       {pendingImport && (
         <ImportBanner
           count={pendingImport.items.length}
-          onAccept={handleImport}
+          onAppend={handleAppend}
+          onReplace={handleReplace}
           onDismiss={() => setPendingImport(null)}
         />
       )}
