@@ -107,7 +107,18 @@ export function useTodos(seed = null) {
   }
 
   function toggle(id) {
-    setTodos(todos.map(t => t.id === id ? { ...t, done: !t.done } : t))
+    const target = todos.find(t => t.id === id)
+    if (!target) return
+    setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t))
+    // 完了にする方向のみ、取り消し線アニメーション（0.35s）完走後に並び替えを反映
+    if (sortDone && !target.done) {
+      setTimeout(() => {
+        setTodos(prev => [
+          ...prev.filter(t => !t.done),
+          ...prev.filter(t => t.done),
+        ])
+      }, 400)
+    }
   }
 
   function toggleSortDone() {
