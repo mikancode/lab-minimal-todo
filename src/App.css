@@ -58,6 +58,17 @@
   }
 }
 
+.import-accept-btn--replace {
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+}
+
+@media (hover: hover) {
+  .import-accept-btn--replace:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+}
+
 .import-dismiss-btn {
   background: rgba(255, 255, 255, 0.12);
   color: white;
