@@ -425,6 +425,24 @@
   color: var(--text-muted);
 }
 
+.item-text--editable {
+  cursor: text;
+}
+
+.item-edit-input {
+  flex: 1;
+  font-size: 16px;
+  line-height: 1.4;
+  font-family: inherit;
+  border: none;
+  border-bottom: 1.5px solid var(--primary);
+  background: transparent;
+  outline: none;
+  padding: 0;
+  color: inherit;
+  word-break: break-all;
+}
+
 .delete-btn {
   flex-shrink: 0;
   width: 36px;

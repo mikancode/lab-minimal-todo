@@ -1,4 +1,38 @@
-export default function TodoItem({ todo, onToggle, onRemove }) {
+import { useState, useRef, useEffect } from 'react'
+import { MAX_TEXT_LENGTH } from '../hooks/useTodos'
+
+export default function TodoItem({ todo, onToggle, onRemove, onUpdate }) {
+  const [isEditing, setIsEditing] = useState(false)
+  const [draft, setDraft] = useState('')
+  const inputRef = useRef(null)
+
+  useEffect(() => {
+    if (isEditing) inputRef.current?.focus()
+  }, [isEditing])
+
+  function startEditing() {
+    if (todo.done) return
+    setDraft(todo.text)
+    setIsEditing(true)
+  }
+
+  function commit() {
+    const trimmed = draft.trim()
+    if (trimmed && trimmed.length <= MAX_TEXT_LENGTH) {
+      onUpdate(todo.id, trimmed)
+    }
+    setIsEditing(false)
+  }
+
+  function cancel() {
+    setIsEditing(false)
+  }
+
+  function handleKeyDown(e) {
+    if (e.key === 'Enter') { e.preventDefault(); commit() }
+    if (e.key === 'Escape') { e.preventDefault(); cancel() }
+  }
+
   return (
     <li className={`item${todo.done ? ' item--done' : ''}`}>
       <button
@@ -18,7 +52,25 @@ export default function TodoItem({ todo, onToggle, onRemove }) {
           </svg>
         )}
       </button>
-      <span className="item-text">{todo.text}</span>
+      {isEditing ? (
+        <input
+          ref={inputRef}
+          className="item-edit-input"
+          value={draft}
+          onChange={e => setDraft(e.target.value)}
+          onBlur={commit}
+          onKeyDown={handleKeyDown}
+          maxLength={MAX_TEXT_LENGTH}
+          aria-label="アイテムを編集"
+        />
+      ) : (
+        <span
+          className={`item-text${todo.done ? '' : ' item-text--editable'}`}
+          onClick={startEditing}
+        >
+          {todo.text}
+        </span>
+      )}
       <button
         className="delete-btn"
         onClick={() => onRemove(todo.id)}

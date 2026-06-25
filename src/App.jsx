@@ -9,7 +9,7 @@ import TemplateSection from './components/TemplateSection'
 import './App.css'
 
 function App() {
-  const { todos, add, addToBack, toggle, remove, importTodos, getShareUrl, clearDone, title, setTitle } = useTodos()
+  const { todos, add, addToBack, toggle, remove, update, importTodos, getShareUrl, clearDone, title, setTitle } = useTodos()
   const [pendingImport, setPendingImport] = useState(() => {
     const shared = parseSharedHash()
     if (shared && shared.items?.length > 0) {
@@ -28,7 +28,7 @@ function App() {
     if (todos.length === 0) {
       importTodos(pendingImport.items)
       if (pendingImport.title) setTitle(pendingImport.title)
-      setPendingImport(null)
+      setPendingImport(null) // eslint-disable-line react-hooks/set-state-in-effect
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -80,6 +80,7 @@ function App() {
           todos={todos}
           onToggle={toggle}
           onRemove={remove}
+          onUpdate={update}
           onClearDone={clearDone}
           topSlot={<AddItemButton onAdd={add} label="＋ 先頭に追加" todosCount={todos.length} maxItems={MAX_ITEMS} maxLength={MAX_TEXT_LENGTH} />}
         >
