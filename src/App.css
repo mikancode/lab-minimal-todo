@@ -441,6 +441,7 @@
 }
 
 /* text-decoration はアニメーション不可のため ::after で取り消し線を再現 */
+/* transition はチェックを入れる方向（width: 0→100%）にのみ付け、外すときは即時消す */
 .item-text::after {
   content: '';
   position: absolute;
@@ -449,11 +450,11 @@
   height: 1.5px;
   width: 0;
   background: currentColor;
-  transition: width 0.35s ease;
 }
 
 .item--done .item-text::after {
   width: 100%;
+  transition: width 0.35s ease;
 }
 
 .item-text--editable {
