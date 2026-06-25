@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import TodoItem from './TodoItem'
 
-export default function TodoList({ todos, onToggle, onRemove, onClearDone, topSlot, children }) {
+export default function TodoList({ todos, onToggle, onRemove, onUpdate, onClearDone, topSlot, children }) {
   const [pendingClear, setPendingClear] = useState(false)
   const timerRef = useRef(null)
 
@@ -44,7 +44,7 @@ export default function TodoList({ todos, onToggle, onRemove, onClearDone, topSl
       ) : (
         <ul className="list">
           {todos.map(todo => (
-            <TodoItem key={todo.id} todo={todo} onToggle={onToggle} onRemove={onRemove} />
+            <TodoItem key={todo.id} todo={todo} onToggle={onToggle} onRemove={onRemove} onUpdate={onUpdate} />
           ))}
         </ul>
       )}

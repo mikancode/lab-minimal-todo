@@ -92,6 +92,12 @@ export function useTodos() {
     setTodos(prev => prev.filter(t => t.id !== id))
   }
 
+  function update(id, newText) {
+    const trimmed = newText.trim()
+    if (!trimmed || trimmed.length > MAX_TEXT_LENGTH) return
+    setTodos(prev => prev.map(t => t.id === id ? { ...t, text: trimmed } : t))
+  }
+
   function importTodos(items) {
     // 共有元と ID が衝突しないよう新規 ID を振り直す
     setTodos(items.map(item => ({
@@ -118,5 +124,5 @@ export function useTodos() {
     return `${base}#t=${LZString.compressToEncodedURIComponent(title)}&l=${encoded}`
   }
 
-  return { todos, add, addToBack, toggle, remove, importTodos, getShareUrl, clearDone, title, setTitle }
+  return { todos, add, addToBack, toggle, remove, update, importTodos, getShareUrl, clearDone, title, setTitle }
 }
